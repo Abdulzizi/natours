@@ -19,6 +19,17 @@ app.get("/api/v1/tours", (req, res) => {
       });
 })
 
+app.get("/api/v1/tours/:_id", (req, res) => {
+    const tour = tours.find(el => el._id === req.params._id);
+
+    res.status(200)
+        .json({
+            status: "success",
+            message: "Data fetched successfully",
+            data: tour
+        })
+})
+
 app.post("/api/v1/tours", (req,res) => {
     const newId = tours[tours.length - 1].id;
     const newTour = Object.assign({id: newId},  req.body);
