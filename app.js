@@ -10,17 +10,17 @@ const PORT = 3030;
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours.json`, "utf8"));
 
-app.get("/api/v1/tours", (req, res) => {
-  res.status(200)
-      .json({
-        status: "success",
-        message: "Data fetched successfully",
-        result: tours.length,
-        data: tours
-      });
-})
+const getAllTours = (req, res) => {
+    res.status(200)
+        .json({
+            status: "success",
+            message: "Data fetched successfully",
+            result: tours.length,
+            data: tours
+        });
+}
 
-app.get("/api/v1/tours/:_id", (req, res) => {
+const getTour = (req, res) => {
     const tour = tours.find(el => el._id === req.params._id);
 
     if(!tour){
@@ -37,9 +37,9 @@ app.get("/api/v1/tours/:_id", (req, res) => {
             message: "Data fetched successfully",
             data: tour
         })
-})
+}
 
-app.post("/api/v1/tours", (req,res) => {
+const addTour = (req,res) => {
     const newId = crypto.randomBytes(12).toString("hex");
     const newTour = Object.assign({ _id: newId },  req.body);
 
@@ -60,9 +60,9 @@ app.post("/api/v1/tours", (req,res) => {
                 data: newTour
             })
     })
-})
+}
 
-app.patch("/api/v1/tours/:_id", (req, res) => {
+const updateTour = (req, res) => {
     console.log(req.body);
     const tour = tours.find(el => el._id === req.params._id);
 
@@ -80,9 +80,9 @@ app.patch("/api/v1/tours/:_id", (req, res) => {
             message: "Data updated successfully",
             data: "THIS IS SUCCHED",
         })
-})
+}
 
-app.delete("/api/v1/tours/:_id", (req, res) => {
+const deleteTour = (req, res) => {
     const tour = tours.find(el => el._id === req.params._id);
 
     if (!tour){
@@ -99,7 +99,13 @@ app.delete("/api/v1/tours/:_id", (req, res) => {
             status: "success",
             message: "Data deleted successfully",
         })
-})
+}
+
+app.get("/api/v1/tours", getAllTours);
+app.get("/api/v1/tours/:_id", getTour);
+app.post("/api/v1/tours", addTour);
+app.patch("/api/v1/tours/:_id", updateTour);
+app.delete("/api/v1/tours/:_id", deleteTour);
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}...`);
