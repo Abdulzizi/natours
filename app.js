@@ -10,6 +10,9 @@ app.use(morgan("dev"));
 
 const PORT = 3030;
 
+const tourRouter = express.Router();
+const userRouter = express.Router();
+
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours.json`, "utf8"));
 const users = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/users.json`, "utf8"));
 
@@ -195,11 +198,14 @@ const deleteUser = (req, res) => {
         })
 }
 
-app.route("/api/v1/tours").get(getAllTours).post(addTour);
-app.route("/api/v1/tours/:_id").get(getTour).patch(updateTour).delete(deleteTour);
+app.use("/api/v1/tours", tourRouter);
+app.use("/api/v1/users", userRouter);
 
-app.route("/api/v1/users").get(getAllUsers).post(addUser);
-app.route("/api/v1/tours/:_id").get(getUser).patch(updateTour).delete(deleteTour);
+tourRouter.route("/").get(getAllTours).post(addTour);
+tourRouter.route("/:_id").get(getTour).patch(updateTour).delete(deleteTour);
+
+userRouter.route("/").get(getAllUsers).post(addUser);
+userRouter.route("/:_id").get(getUser).patch(updateUser).delete(deleteUser);
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}...`);
