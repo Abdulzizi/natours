@@ -11,6 +11,7 @@ app.use(morgan("dev"));
 const PORT = 3030;
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours.json`, "utf8"));
+const users = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/users.json`, "utf8"));
 
 const getAllTours = (req, res) => {
     res.status(200)
@@ -103,8 +104,102 @@ const deleteTour = (req, res) => {
         })
 }
 
+const getAllUsers = (req, res) => {
+    res.status(200)
+        .json({
+            status: "success",
+            message: "Data fetched successfully",
+            data: users
+        })
+}
+
+const getUser = (req, res) => {
+    const id = req.params._id;
+    const user = users.find(el => el._id === id);
+
+    if (!user){
+        return res.status(404)
+            .json({
+                status: "error",
+                message: "Invalid Id",
+            })
+    }
+
+    res.status(200)
+        .json({
+            status: "success",
+            message: "Data fetched successfully",
+            data: user
+        })
+}
+
+const addUser = (req,res) => {
+    const newId = crypto.randomBytes(12).toString("hex");
+    const newUser = Object.assign({ _id: newId },  req.body);
+
+    tours.push(newUser);
+    fs.writeFile(`${__dirname}/dev-data/data/users.json`, JSON.stringify(tours), err => {
+        if (err) {
+            return res.status(500)
+                .json({
+                    status: "error",
+                    message: err
+                });
+        }
+
+        res.status(200)
+            .json({
+                status: "success",
+                message: "Data created successfully",
+                data: newUser
+            })
+    })
+}
+
+const updateUser = (req, res) => {
+    const id = req.params._id;
+    const user = users.find(el => el._id === id);
+
+    if (!user){
+        return res.status(404)
+            .json({
+                status: "error",
+                message: "Invalid Id",
+            })
+    }
+
+    res.status(200)
+        .json({
+            status: "success",
+            message: "Data updated successfully",
+            data: "THIS IS USER UPDATED",
+        })
+}
+
+const deleteUser = (req, res) => {
+    const id = req.params._id;
+    const user = users.find(el => el._id === id);
+
+    if (!user){
+        return res.status(404)
+            .json({
+                status: "error",
+                message: "Invalid Id",
+            })
+    }
+
+    res.status(200)
+        .json({
+            status: "success",
+            message: "Data deleted successfully",
+        })
+}
+
 app.route("/api/v1/tours").get(getAllTours).post(addTour);
 app.route("/api/v1/tours/:_id").get(getTour).patch(updateTour).delete(deleteTour);
+
+app.route("/api/v1/users").get(getAllUsers).post(addUser);
+app.route("/api/v1/tours/:_id").get(getUser).patch(updateTour).delete(deleteTour);
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}...`);
