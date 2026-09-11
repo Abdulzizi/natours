@@ -101,11 +101,8 @@ const deleteTour = (req, res) => {
         })
 }
 
-app.get("/api/v1/tours", getAllTours);
-app.get("/api/v1/tours/:_id", getTour);
-app.post("/api/v1/tours", addTour);
-app.patch("/api/v1/tours/:_id", updateTour);
-app.delete("/api/v1/tours/:_id", deleteTour);
+app.route("/api/v1/tours").get(getAllTours).post(addTour);
+app.route("/api/v1/tours/:_id").get(getTour).patch(updateTour).delete(deleteTour);
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}...`);
