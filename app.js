@@ -1,10 +1,12 @@
 const express = require("express");
 const fs = require("node:fs");
 const crypto = require("crypto");
+const morgan = require("morgan");
 
 const app = express();
 
 app.use(express.json());
+app.use(morgan("dev"));
 
 const PORT = 3030;
 
@@ -46,7 +48,7 @@ const addTour = (req,res) => {
     tours.push(newTour);
     fs.writeFile(`${__dirname}/dev-data/data/tours.json`, JSON.stringify(tours), err => {
         if (err) {
-            res.status(500)
+            return res.status(500)
                 .json({
                     status: "error",
                     message: err
@@ -63,11 +65,11 @@ const addTour = (req,res) => {
 }
 
 const updateTour = (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const tour = tours.find(el => el._id === req.params._id);
 
     if(!tour){
-        res.status(404)
+        return res.status(404)
             .json({
                 status: "error",
                 message: "Invalid Id",
@@ -86,7 +88,7 @@ const deleteTour = (req, res) => {
     const tour = tours.find(el => el._id === req.params._id);
 
     if (!tour){
-        res.status(404)
+        return res.status(404)
             .json({
                 status: "error",
                 message: "Invalid Id",
